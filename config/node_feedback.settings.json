@@ -2,6 +2,7 @@
     "_config_name": "node_feedback.settings",
     "nf_header_text": "",
     "nf_button_text": "Leave feedback",
+    "nf_button_class": "",
     "nf_thanks_message": "Thanks for your feedback!",
     "nf_feedback_title": "Tell us more..",
     "nf_allowed_content_type": "",

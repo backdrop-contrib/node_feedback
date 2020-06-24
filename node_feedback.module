@@ -128,6 +128,18 @@ function node_feedback_settings_form()
     '#required' => true,
   );
 
+  $flag_button_class_value = $config->get('nf_button_class');
+
+  $form['nf_button_class'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Extra classes for buttons'),
+    '#description' => t('Add any extra classes for the submit buttons, separated by spaces.'),
+    '#default_value' => $flag_button_class_value,
+    '#size' => 60,
+    '#maxlength' => 128,
+    '#required' => true,
+  );
+
   $flag_thanks_message = $config->get('nf_thanks_message');
   $form['nf_thanks_message'] = array(
     '#type' => 'textfield',
@@ -246,10 +258,13 @@ function node_feedback_form($form, &$form_state)
     );
     $form['submit-feedback'] = array(
       '#type' => 'submit',
-      '#value' => 'Submit',
+      '#value' => t('Submit'),
       '#ajax' => array(
         'callback' => 'node_feedback_form_callback_feedback_submit',
         'wrapper' => 'node_feedback_form_wrapper',
+      ),
+      '#attributes' => array(
+        'class' => explode(" ", $config->get('nf_button_class')),
       ),
       '#suffix' => '</div>',
     );
@@ -273,6 +288,9 @@ function node_feedback_form($form, &$form_state)
       '#ajax' => array(
         'callback' => 'node_feedback_form_callback',
         'wrapper' => 'node_feedback_form_wrapper',
+      ),
+      '#attributes' => array(
+        'class' => explode(" ", $config->get('nf_button_class')),
       ),
       '#suffix' => '</div>',
     );
