@@ -15,8 +15,7 @@ Installation
   https://backdropcms.org/guide/modules.
 
 - Visit the configuration page under Administration > Configuration > User
-- Interface > Node Feedback (admin/config/user-interface/nf-settings) and enter
-- the required information.
+- Interface > Node Feedback (admin/config/user-interface/nf-settings) and enter the required information.
 
 - Add the Node Feedback form to a node layout.
 
