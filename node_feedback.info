@@ -1,0 +1,7 @@
+name = Node Feedback
+description = "Feedback by node"
+package = Node Feedback
+backdrop = 1.x
+type = module
+dependencies[] = views
+configure = admin/config/user-interface/nf-settings
