@@ -281,7 +281,7 @@ function node_feedback_form($form, &$form_state)
       '#markup' => $flag_header_text,
     );
         $flag_button_text_value = $config->get('nf_button_text');
-        $form['submit-no'] = array(
+        $form['submit'] = array(
       '#type' => 'submit',
       '#value' => $flag_button_text_value,
       '#ajax' => array(
@@ -307,7 +307,7 @@ function node_feedback_form_callback($form, $form_state)
     $name = $user->name ? $user->name : 'anonymous';
     $form_state['show'] = true;
 
-
+    // TODO spam control
     $nid = $form_state['build_info']['args'][0]['nid'];
 
     $fields = array(
@@ -335,6 +335,7 @@ function node_feedback_form_callback($form, $form_state)
  */
 function node_feedback_form_callback_feedback_submit($form, $form_state)
 {
+    //TODO spam control
     $nf_id = $form_state['nf_id'];
 
     $feedback = $form_state['values']['comment'];
@@ -372,20 +373,6 @@ function node_feedback_views_api()
 }
 
 /**
- * Implements hook_action_info().
- */
-function node_feedback_action_info()
-{
-    return array(
-    'node_feedback_delete' => array(
-      'type' => 'node_feedback',
-      'label' => t('Delete feedback'),
-      'callback' => 'node_feedback_delete_action',
-    ),
-  );
-}
-
-/**
  * Deletes a feedback.
  *
  * @param $feedback
@@ -395,4 +382,5 @@ function node_feedback_action_info()
  */
 function node_feedback_delete_action($feedback, $context = array())
 {
+    //TODO implement edit actions on feedbacks
 }
