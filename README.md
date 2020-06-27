@@ -17,7 +17,9 @@ Installation
 - Visit the configuration page under Administration > Configuration > User
 - Interface > Node Feedback (admin/config/user-interface/nf-settings) and enter the required information.
 
-- Add the Node Feedback form to a node layout.
+- Add the Node Feedback form block to a node layout.
+- Setting permissions for the form: this module doesn't set any permission to
+  show the form. You can do that whithin the block's configuration.
 
 Issues
 ------
