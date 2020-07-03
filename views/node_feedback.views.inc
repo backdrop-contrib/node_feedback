@@ -8,88 +8,87 @@
 /**
  * Implements hook_views_data().
  */
-function node_feedback_views_data()
-{
-  $data['node_feedback'] = array(
-    'table' => array(
+function node_feedback_views_data() {
+  $data['node_feedback'] = [
+    'table' => [
       'group' => 'Node Feedback',
-      'base' => array(
+      'base' => [
         'field' => 'nfid',
         'title' => 'Node Feedback Table',
         'help' => 'All the feedbacks are saved in this table',
-      ),
-    ),
-    'nfid' => array(
+      ],
+    ],
+    'nfid' => [
       'title' => t('NF Id'),
       'help' => t('ID field'),
-      'field' => array(
-        'click sortable' => true,
-      ),
-      'filter' => array(
+      'field' => [
+        'click sortable' => TRUE,
+      ],
+      'filter' => [
         'handler' => 'views_handler_filter_numeric',
-      ),
-      'sort' => array(
+      ],
+      'sort' => [
         'handler' => 'views_handler_sort',
-      ),
-    ),
-    'nid' => array(
+      ],
+    ],
+    'nid' => [
       'title' => t('Node Id'),
       'help' => t('Node Id'),
-      'field' => array(
-        'click sortable' => true,
-      ),
-      'filter' => array(
+      'field' => [
+        'click sortable' => TRUE,
+      ],
+      'filter' => [
         'handler' => 'views_handler_filter_numeric',
-      ),
-      'sort' => array(
+      ],
+      'sort' => [
         'handler' => 'views_handler_sort',
-      ),
-      'relationship' => array(
+      ],
+      'relationship' => [
         'handler' => 'views_handler_relationship',
         'base' => 'node',
         'base field' => 'nid',
         'title' => t('Flagged Content'),
         'label' => t('Flagged node content.'),
-      ),
-    ),
-    'name' => array(
+      ],
+    ],
+    'name' => [
       'title' => t('Username'),
       'help' => t('Username of the feedback author.'),
-      'field' => array(
-        'click sortable' => true,
-      ),
-      'filter' => array(
+      'field' => [
+        'click sortable' => TRUE,
+      ],
+      'filter' => [
         'handler' => 'views_handler_filter_string',
-      ),
-    ),
-    'response_text_feedback' => array(
+      ],
+    ],
+    'response_text_feedback' => [
       'title' => t('Feedback'),
       'help' => t('Flaging feedback'),
-      'field' => array(
-        'click sortable' => true,
-      ),
-      'sort' => array(
+      'field' => [
+        'click sortable' => TRUE,
+      ],
+      'sort' => [
         'handler' => 'views_handler_sort',
-      ),
-      'filter' => array(
+      ],
+      'filter' => [
         'handler' => 'views_handler_filter_string',
-      ),
-    ),
-    'timestamp' => array(
+      ],
+    ],
+    'timestamp' => [
       'title' => t('Updated Date'),
       'help' => t('Updated timestamp of the flag'),
-      'field' => array(
-        'click sortable' => true,
+      'field' => [
+        'click sortable' => TRUE,
         'handler' => 'views_handler_field_date',
-      ),
-      'filter' => array(
+      ],
+      'filter' => [
         'handler' => 'views_handler_filter_date',
-      ),
-      'sort' => array(
+      ],
+      'sort' => [
         'handler' => 'views_handler_sort',
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 
   return $data;
 }

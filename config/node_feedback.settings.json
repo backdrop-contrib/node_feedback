@@ -6,5 +6,6 @@
     "nf_thanks_message": "Thanks for your feedback!",
     "nf_feedback_title": "Tell us more..",
     "nf_allowed_content_type": "",
-    "nf_show_stats": ""
+    "nf_show_stats": "",
+    "nf_honeypot_protect": ""
 }

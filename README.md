@@ -14,12 +14,16 @@ Installation
 - Install this module using the official Backdrop CMS instructions at
   https://backdropcms.org/guide/modules.
 
-- Visit the configuration page under Administration > Configuration > User
-- Interface > Node Feedback (admin/config/user-interface/nf-settings) and enter the required information.
+- Visit the configuration page under Administration > Configuration >
+User Interface > Node Feedback (admin/config/user-interface/nf-settings) and enter
+  the required information.
 
 - Add the Node Feedback form block to a node layout.
+
 - Setting permissions for the form: this module doesn't set any permission to
   show the form. You can do that whithin the block's configuration.
+
+- SPAM control: if you install the honeypot module you will see a new setting to add Node Feedback forms to honeypot's SPAM control system.
 
 Issues
 ------
