@@ -132,7 +132,7 @@ function node_feedback_settings_form() {
     '#default_value' => $flag_button_class_value,
     '#size' => 60,
     '#maxlength' => 128,
-    '#required' => TRUE,
+    '#required' => FALSE,
   ];
 
   $flag_thanks_message = $config->get('nf_thanks_message');
