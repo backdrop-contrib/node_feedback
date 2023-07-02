@@ -132,7 +132,7 @@ function node_feedback_settings_form() {
     '#default_value' => $flag_button_class_value,
     '#size' => 60,
     '#maxlength' => 128,
-    '#required' => TRUE,
+    '#required' => FALSE,
   ];
 
   $flag_thanks_message = $config->get('nf_thanks_message');
@@ -212,7 +212,7 @@ function node_feedback_settings_form() {
  * This hook declares what blocks are provided by the module.
  */
 function node_feedback_block_info() {
-  $blocks['nf_stats'] = [
+  $blocks['node_feedback'] = [
     // info: The name of the block.
     'info' => t('Node Feedback: form'),
     'description' => 'Node Feedback form.',
@@ -229,7 +229,7 @@ function node_feedback_block_info() {
 function node_feedback_block_view($delta = '', $settings = [], $contexts = []) {
   // The $delta parameter tells us which block is being requested.
   switch ($delta) {
-    case 'nf_stats':
+    case 'node_feedback':
       $node = $contexts['node'];
       $nf_allowed_content_types = config_get('node_feedback.settings', 'nf_allowed_content_type');
       // dpm($nf_allowed_content_types);
@@ -240,7 +240,7 @@ function node_feedback_block_view($delta = '', $settings = [], $contexts = []) {
         $nf_form = backdrop_get_form('node_feedback_form', $args);
         // Pull out the contextual information (a node in this case) from the
         // contexts array.
-        $block['subject'] = t('Feedback stats for this node');
+        $block['subject'] = t('Feedback for this node');
         $block['content'] = backdrop_render($nf_form);
       }
     }
