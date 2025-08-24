@@ -9,47 +9,47 @@
  * Implements hook_schema().
  */
 function node_feedback_schema() {
-  $schema = [];
+  $schema = array();
 
-  $schema['node_feedback'] = [
+  $schema['node_feedback'] = array(
     'description' => 'Node Feedback entries.',
-    'fields' => [
-      'nfid' => [
+    'fields' => array(
+      'nfid' => array(
         'description' => 'The unique ID for this particular flag.',
         'type' => 'serial',
         'size' => 'small',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ],
-      'nid' => [
+      ),
+      'nid' => array(
         'description' => 'The unique ID of the node.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 0,
-      ],
-      'name' => [
+      ),
+      'name' => array(
         'type' => 'varchar',
         'length' => 60,
         'not null' => TRUE,
         'default' => '',
         'description' => 'Unique user name.',
-      ],
-      'response_text_feedback' => [
+      ),
+      'response_text_feedback' => array(
         'description' => 'The response text feedback of this flag if any.',
         'type' => 'text',
         'not null' => FALSE,
-      ],
-      'timestamp' => [
+      ),
+      'timestamp' => array(
         'description' => 'The UNIX time stamp representing when the flag was set.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 0,
-      ],
-    ],
-    'primary key' => ['nfid'],
-  ];
+      ),
+    ),
+    'primary key' => array('nfid'),
+  );
 
   return $schema;
 }
@@ -59,10 +59,10 @@ function node_feedback_schema() {
  */
 function node_feedback_uninstall() {
   // Remove default, un-modified views.
-  $configs = [
+  $configs = array(
     'views.view.node_feedback_stats',
     'views.view.node_feedback_report',
-  ];
+  );
   foreach ($configs as $file) {
     $config = config($file);
     if ($config->get('storage') != VIEWS_STORAGE_OVERRIDE) {
@@ -89,8 +89,8 @@ function node_feedback_update_1000() {
   $config->set('nf_yes_message', update_variable_get('nf_yes_message', 'Thanks for your feedback!'));
   $config->set('nf_thanks_message', update_variable_get('nf_thanks_message', 'Thanks for your feedback!'));
   $config->set('nf_feedback_title', update_variable_get('nf_feedback_title', 'Tell us more..'));
-  $config->set('nf_allowed_content_type', update_variable_get('nf_allowed_content_type', []));
-  $config->set('nf_show_stats', update_variable_get('nf_show_stats', []));
+  $config->set('nf_allowed_content_type', update_variable_get('nf_allowed_content_type', array()));
+  $config->set('nf_show_stats', update_variable_get('nf_show_stats', array()));
 
   $config->save();
 
