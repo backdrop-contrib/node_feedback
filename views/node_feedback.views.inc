@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Using hooks_views_data to contruct view dynamically.
+ * Using hooks_views_data to construct view dynamically.
  */
 
 /**
@@ -47,8 +47,27 @@ function node_feedback_views_data() {
         'handler' => 'views_handler_relationship',
         'base' => 'node',
         'base field' => 'nid',
-        'title' => t('Flagged Content'),
-        'label' => t('Flagged node content.'),
+        'title' => t('Node'),
+        'label' => t('The node that was flagged.'),
+      ),
+    ),
+    'node_title' => array(
+      'title' => t('Node Title'),
+      'help' => t('The title of the node that was flagged.'),
+      'field' => array(
+        'handler' => 'views_handler_field_node',
+        'click sortable' => TRUE,
+      ),
+      'filter' => array(
+        'handler' => 'views_handler_filter_string',
+      ),
+      'sort' => array(
+        'handler' => 'views_handler_sort',
+      ),
+      'relationship' => array(
+        'base' => 'node',
+        'base field' => 'nid',
+        'relationship field' => 'nid',
       ),
     ),
     'name' => array(
