@@ -13,28 +13,28 @@
  * Implements hook_menu().
  */
 function node_feedback_menu() {
-  $items['admin/config/user-interface'] = [
+  $items['admin/config/user-interface'] = array(
     'title' => 'Node Feedback',
     'description' => 'Settings related to Node Feedback module.',
     'position' => 'right',
     'weight' => 0,
-    'access arguments' => ['administer site configuration'],
-  ];
-  $items['admin/config/user-interface/nf-settings'] = [
+    'access arguments' => array('administer site configuration'),
+  );
+  $items['admin/config/user-interface/nf-settings'] = array(
     'title' => 'Node Feedback',
     'description' => 'Configuration settings for NF widget',
     'page callback' => 'backdrop_get_form',
-    'page arguments' => ['node_feedback_settings_form'],
-    'access arguments' => ['administer site configuration'],
+    'page arguments' => array('node_feedback_settings_form'),
+    'access arguments' => array('administer site configuration'),
     'type' => MENU_NORMAL_ITEM,
-  ];
-  $items['node/%node/nf-stats'] = [
+  );
+  $items['node/%node/nf-stats'] = array(
     'title' => 'Node Feedback Stats',
     'page callback' => 'node_feedback_stats',
-    'page arguments' => [1],
-    'access callback' => ['node_feedback_stats_check'],
+    'page arguments' => array(1),
+    'access callback' => array('node_feedback_stats_check'),
     'type' => MENU_LOCAL_TASK,
-  ];
+  );
   return $items;
 }
 
@@ -42,10 +42,10 @@ function node_feedback_menu() {
  * Implements hook_config_info().
  */
 function node_feedback_config_info() {
-  $prefixes['node_feedback.settings'] = [
+  $prefixes['node_feedback.settings'] = array(
     'label' => t('Node Feedback'),
     'group' => t('Node Feedback'),
-  ];
+  );
   return $prefixes;
 }
 
@@ -102,7 +102,7 @@ function node_feedback_settings_form() {
 
   $flag_header_text = $config->get('nf_header_text');
   $form['#config'] = 'node_feedback.settings';
-  $form['nf_header_text'] = [
+  $form['nf_header_text'] = array(
     '#type' => 'textfield',
     '#title' => t('Header text'),
     '#description' => t('The header text appears before the Node Feedback widget.'),
@@ -110,22 +110,22 @@ function node_feedback_settings_form() {
     '#size' => 60,
     '#maxlength' => 128,
     '#required' => FALSE,
-  ];
+  );
 
   $flag_button_text_value = $config->get('nf_button_text');
 
-  $form['nf_button_text'] = [
+  $form['nf_button_text'] = array(
     '#type' => 'textfield',
     '#title' => t('Button text'),
     '#default_value' => $flag_button_text_value,
     '#size' => 60,
     '#maxlength' => 128,
     '#required' => TRUE,
-  ];
+  );
 
   $flag_button_class_value = $config->get('nf_button_class');
 
-  $form['nf_button_class'] = [
+  $form['nf_button_class'] = array(
     '#type' => 'textfield',
     '#title' => t('Extra classes for buttons'),
     '#description' => t('Add any extra classes for the submit buttons, separated by spaces.'),
@@ -133,10 +133,10 @@ function node_feedback_settings_form() {
     '#size' => 60,
     '#maxlength' => 128,
     '#required' => FALSE,
-  ];
+  );
 
   $flag_thanks_message = $config->get('nf_thanks_message');
-  $form['nf_thanks_message'] = [
+  $form['nf_thanks_message'] = array(
     '#type' => 'textfield',
     '#title' => t('Thanks message'),
     '#description' => t('Message displayed after leaving a feedback.'),
@@ -144,10 +144,10 @@ function node_feedback_settings_form() {
     '#size' => 60,
     '#maxlength' => 128,
     '#required' => FALSE,
-  ];
+  );
 
   $flag_feedback_title = $config->get('nf_feedback_title', t('Tell us more..'));
-  $form['nf_feedback_title'] = [
+  $form['nf_feedback_title'] = array(
     '#type' => 'textfield',
     '#title' => t('Feedback Title'),
     '#description' => t('Message to be displayed as title for the feedback form.'),
@@ -155,9 +155,9 @@ function node_feedback_settings_form() {
     '#size' => 60,
     '#maxlength' => 128,
     '#required' => FALSE,
-  ];
+  );
 
-  $allowed_content_types = [];
+  $allowed_content_types = array();
   $content_types = node_type_get_types();
   foreach ($content_types as $content_type) {
     $machine_name = $content_type->type;
@@ -165,7 +165,7 @@ function node_feedback_settings_form() {
     $allowed_content_types[$machine_name] = $content_type_name;
   }
   $nf_allowed_content_type = $config->get('nf_allowed_content_type');
-  $form['nf_allowed_content_type'] = [
+  $form['nf_allowed_content_type'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Allowed content type'),
     '#default_value' => $nf_allowed_content_type,
@@ -174,11 +174,11 @@ function node_feedback_settings_form() {
     '#multiple' => TRUE,
     '#required' => TRUE,
     '#weight' => 15,
-  ];
+  );
 
   $roles = user_roles();
   $nf_show_stats = $config->get('nf_show_stats');
-  $form['nf_show_stats'] = [
+  $form['nf_show_stats'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Show stats for specific roles'),
     '#default_value' => $nf_show_stats,
@@ -187,20 +187,20 @@ function node_feedback_settings_form() {
     '#multiple' => TRUE,
     '#required' => TRUE,
     '#weight' => 15,
-  ];
+  );
 
   if (module_exists('honeypot')) {
     $nf_honeypot_protect = $config->get('nf_honeypot_protect');
-    $form['nf_honeypot_fieldset'] = [
+    $form['nf_honeypot_fieldset'] = array(
       '#type' => 'fieldset',
       '#title' => t('Honeypot form protection'),
       '#weight' => 16,
-    ];
-    $form['nf_honeypot_fieldset']['nf_honeypot_protect'] = [
+    );
+    $form['nf_honeypot_fieldset']['nf_honeypot_protect'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use honeypot form protection.'),
       '#default_value' => $nf_honeypot_protect,
-    ];
+    );
   }
 
   return system_settings_form($form);
@@ -212,12 +212,12 @@ function node_feedback_settings_form() {
  * This hook declares what blocks are provided by the module.
  */
 function node_feedback_block_info() {
-  $blocks['node_feedback'] = [
+  $blocks['node_feedback'] = array(
     // info: The name of the block.
     'info' => t('Node Feedback: form'),
     'description' => 'Node Feedback form.',
-    'required contexts' => ['node' => 'node'],
-  ];
+    'required contexts' => array('node' => 'node'),
+  );
   return $blocks;
 }
 
@@ -226,24 +226,23 @@ function node_feedback_block_info() {
  *
  * This hook generates the contents of the blocks themselves.
  */
-function node_feedback_block_view($delta = '', $settings = [], $contexts = []) {
+function node_feedback_block_view($delta = '', $settings = array(), $contexts = array()) {
   // The $delta parameter tells us which block is being requested.
   switch ($delta) {
     case 'node_feedback':
       $node = $contexts['node'];
       $nf_allowed_content_types = config_get('node_feedback.settings', 'nf_allowed_content_type');
-      // dpm($nf_allowed_content_types);
       if (count($nf_allowed_content_types) > 0 && $nf_allowed_content_types[$node->type]) {
-        $args = [
+        $args = array(
           'nid' => $node->nid,
-        ];
+        );
         $nf_form = backdrop_get_form('node_feedback_form', $args);
         // Pull out the contextual information (a node in this case) from the
         // contexts array.
         $block['subject'] = t('Feedback for this node');
         $block['content'] = backdrop_render($nf_form);
       }
-    }
+  }
   return $block;
 }
 
@@ -254,52 +253,52 @@ function node_feedback_form($form, &$form_state) {
   $config = config('node_feedback.settings');
   if (isset($form_state['show']) && $form_state['show'] === TRUE) {
     $flag_feedback_title = $config->get('nf_feedback_title');
-    $form['comment'] = [
+    $form['comment'] = array(
       '#prefix' => '<div id="node_feedback_form_wrapper"><div class="nf_feedback_form">',
       '#suffix' => '</div>',
       '#type' => 'textarea',
       '#title' => $flag_feedback_title,
       '#default_value' => '',
-      '#attributes' => ['autocomplete' => 'off'],
-    ];
-    $form['submit-feedback'] = [
+      '#attributes' => array('autocomplete' => 'off'),
+    );
+    $form['submit-feedback'] = array(
       '#type' => 'submit',
       '#value' => t('Submit'),
-      '#ajax' => [
+      '#ajax' => array(
         'callback' => 'node_feedback_form_callback_feedback_submit',
         'wrapper' => 'node_feedback_form_wrapper',
-      ],
-      '#attributes' => [
+      ),
+      '#attributes' => array(
         'class' => explode(' ', $config->get('nf_button_class')),
-      ],
+      ),
       '#suffix' => '</div>',
-    ];
+    );
   } elseif (isset($form_state['comment_feedback']) && $form_state['comment_feedback'] === TRUE) {
-    $form['flag_response_text'] = [
+    $form['flag_response_text'] = array(
       '#type' => 'markup',
       '#markup' => '<div class="messages status">' . $config->get('nf_thanks_message') . '</div>',
-    ];
+    );
   } else {
     $flag_header_text = $config->get('nf_header_text');
-    $form['header_text'] = [
+    $form['header_text'] = array(
       '#prefix' => '<div id="node_feedback_form_wrapper"><div class="nf_header_text">',
       '#suffix' => '</div>',
       '#type' => 'markup',
       '#markup' => $flag_header_text,
-    ];
+    );
     $flag_button_text_value = $config->get('nf_button_text');
-    $form['submit'] = [
+    $form['submit'] = array(
       '#type' => 'submit',
       '#value' => $flag_button_text_value,
-      '#ajax' => [
+      '#ajax' => array(
         'callback' => 'node_feedback_form_callback',
         'wrapper' => 'node_feedback_form_wrapper',
-      ],
-      '#attributes' => [
+      ),
+      '#attributes' => array(
         'class' => explode(' ', $config->get('nf_button_class')),
-      ],
+      ),
       '#suffix' => '</div>',
-    ];
+    );
   }
 
   return $form;
@@ -317,11 +316,11 @@ function node_feedback_form_callback($form, $form_state) {
     // TODO spam control
     $nid = $form_state['build_info']['args'][0]['nid'];
 
-    $fields = [
+    $fields = array(
       'nid' => $nid,
       'name' => $name,
       'timestamp' => time(),
-    ];
+    );
     $nf_id = db_insert('node_feedback')
       ->fields($fields)
       ->execute();
@@ -329,12 +328,11 @@ function node_feedback_form_callback($form, $form_state) {
     $form_state['nf_id'] = $nf_id;
 
     $form['comment']['#default_value'] = '';
-    $form['comment']['#attributes'] = [
+    $form['comment']['#attributes'] = array(
       'autocomplete' => 'off',
       'placeholder' => t('Write your comment'),
-    ];
-  }
-  else {
+    );
+  } else {
     $form_state['show'] = FALSE;
   }
   return backdrop_rebuild_form('node_feedback_form', $form_state, $form);
@@ -347,24 +345,24 @@ function node_feedback_form_callback_feedback_submit($form, $form_state) {
   $nf_id = $form_state['nf_id'];
 
   $feedback = $form_state['values']['comment'];
-  $fields = [
+  $fields = array(
     'response_text_feedback' => $feedback,
     'timestamp' => time(),
-  ];
+  );
   db_update('node_feedback')
-  ->fields($fields)
-  ->condition('nfid', $nf_id, '=')
-  ->execute();
+    ->fields($fields)
+    ->condition('nfid', $nf_id, '=')
+    ->execute();
 
   unset($form_state['show'], $form_state['nf_id']);
 
   $form_state['comment_feedback'] = TRUE;
 
   $form['comment']['#default_value'] = '';
-  $form['comment']['#attributes'] = [
+  $form['comment']['#attributes'] = array(
     'autocomplete' => 'off',
     'placeholder' => t('Write your comment'),
-  ];
+  );
 
   return backdrop_rebuild_form('node_feedback_form', $form_state, $form);
 }
@@ -373,10 +371,10 @@ function node_feedback_form_callback_feedback_submit($form, $form_state) {
  * Implements hook_views_api().
  */
 function node_feedback_views_api() {
-  return [
+  return array(
     'api' => 3,
     'path' => backdrop_get_path('module', 'node_feedback') . '/views',
-  ];
+  );
 }
 
 /**
@@ -387,7 +385,7 @@ function node_feedback_views_api() {
  *
  * @ingroup actions
  */
-function node_feedback_delete_action($feedback, $context = []) {
+function node_feedback_delete_action($feedback, $context = array()) {
   //TODO implement edit actions on feedbacks
 }
 
@@ -395,7 +393,7 @@ function node_feedback_delete_action($feedback, $context = []) {
  * Implements hook_honeypot_protect_forms_info().
  */
 function node_feedback_honeypot_protect_forms_info() {
-  return [
+  return array(
     'node_feedback_form',
-  ];
+  );
 }
