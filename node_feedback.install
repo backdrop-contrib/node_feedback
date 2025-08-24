@@ -72,12 +72,6 @@ function node_feedback_uninstall() {
 }
 
 /**
- * @defgroup updates-7.x-to-1.x Updates from 7.x to 1.x
- * @{
- * Update functions from Drupal 7.x to Backdrop CMS 1.x.
- */
-
-/**
  * Move book settings from variables to config.
  */
 function node_feedback_update_1000() {
@@ -106,6 +100,217 @@ function node_feedback_update_1000() {
 }
 
 /**
- * @} End of "defgroup updates-7.x-to-1.x"
- * The next series of updates should start at 2000.
+ * Update node feedback views to include node title field.
  */
+function node_feedback_update_1001() {
+  // Load and update the node_feedback_stats view
+  $view_stats = config('views.view.node_feedback_stats');
+  if ($view_stats && !$view_stats->isNew()) {
+    // Get current fields
+    $fields = $view_stats->get('display.default.display_options.fields');
+
+    // Create title field definition
+    $title_field = array(
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
+      'relationship' => 'nid',
+      'group_type' => 'group',
+      'ui_name' => '',
+      'label' => 'Node Title',
+      'exclude' => 0,
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 1,
+        'path' => '',
+        'absolute' => 0,
+        'external' => 0,
+        'replace_spaces' => 0,
+        'path_case' => 'none',
+        'trim_whitespace' => 0,
+        'alt' => '',
+        'rel' => '',
+        'link_class' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'nl2br' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'more_link' => 0,
+        'more_link_text' => '',
+        'more_link_path' => '',
+        'strip_tags' => 0,
+        'trim' => 0,
+        'preserve_tags' => '',
+        'html' => 0,
+      ),
+      'element_type' => '',
+      'element_class' => '',
+      'element_label_type' => '',
+      'element_label_class' => '',
+      'element_label_colon' => 1,
+      'element_wrapper_type' => '',
+      'element_wrapper_class' => '',
+      'element_default_classes' => 1,
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'hide_alter_empty' => 1,
+      'link_to_node' => 1,
+    );
+
+    // Reorder fields: nfid, title, then the rest
+    $new_fields = array();
+    foreach ($fields as $field_name => $field_config) {
+      $new_fields[$field_name] = $field_config;
+      // After nfid, insert the title field
+      if ($field_name === 'nfid') {
+        $new_fields['title'] = $title_field;
+      }
+    }
+
+    // Update relationships to ensure node relationship exists
+    $relationships = $view_stats->get('display.default.display_options.relationships');
+    if (!isset($relationships['nid'])) {
+      $relationships['nid'] = array(
+        'id' => 'nid',
+        'table' => 'node_feedback',
+        'field' => 'nid',
+        'relationship' => 'none',
+        'group_type' => 'group',
+        'ui_name' => '',
+        'label' => 'Node',
+        'required' => 0,
+      );
+    }
+
+    // Update style options to include the new field in the correct position
+    $style_options = $view_stats->get('display.default.display_options.style_options');
+    $style_options['columns']['title'] = 'title';
+    $style_options['info']['title'] = array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    );
+
+    // Save the updated configuration
+    $view_stats->set('display.default.display_options.fields', $new_fields);
+    $view_stats->set('display.default.display_options.relationships', $relationships);
+    $view_stats->set('display.default.display_options.style_options', $style_options);
+    $view_stats->save();
+  }
+
+  // Load and update the node_feedback_report view
+  $view_report = config('views.view.node_feedback_report');
+  if ($view_report && !$view_report->isNew()) {
+    // Get current fields
+    $fields = $view_report->get('display.default.display_options.fields');
+
+    // Create title field definition
+    $title_field = array(
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
+      'relationship' => 'nid',
+      'group_type' => 'group',
+      'ui_name' => '',
+      'label' => 'Node Title',
+      'exclude' => 0,
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 1,
+        'path' => '',
+        'absolute' => 0,
+        'external' => 0,
+        'replace_spaces' => 0,
+        'path_case' => 'none',
+        'trim_whitespace' => 0,
+        'alt' => '',
+        'rel' => '',
+        'link_class' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'nl2br' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'more_link' => 0,
+        'more_link_text' => '',
+        'more_link_path' => '',
+        'strip_tags' => 0,
+        'trim' => 0,
+        'preserve_tags' => '',
+        'html' => 0,
+      ),
+      'element_type' => '',
+      'element_class' => '',
+      'element_label_type' => '',
+      'element_label_class' => '',
+      'element_label_colon' => 1,
+      'element_wrapper_type' => '',
+      'element_wrapper_class' => '',
+      'element_default_classes' => 1,
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'hide_alter_empty' => 1,
+      'link_to_node' => 1,
+    );
+
+    // Reorder fields: timestamp, nfid, title, then the rest
+    $new_fields = array();
+    foreach ($fields as $field_name => $field_config) {
+      $new_fields[$field_name] = $field_config;
+      // After nfid, insert the title field
+      if ($field_name === 'nfid') {
+        $new_fields['title'] = $title_field;
+      }
+    }
+
+    // Update relationships to ensure node relationship exists
+    $relationships = $view_report->get('display.default.display_options.relationships');
+    if (!isset($relationships['nid'])) {
+      $relationships['nid'] = array(
+        'id' => 'nid',
+        'table' => 'node_feedback',
+        'field' => 'nid',
+        'relationship' => 'none',
+        'group_type' => 'group',
+        'ui_name' => '',
+        'label' => 'Node',
+        'required' => 0,
+      );
+    }
+
+    // Update style options to include the new field in the correct position
+    $style_options = $view_report->get('display.default.display_options.style_options');
+    $style_options['columns']['title'] = 'title';
+    $style_options['info']['title'] = array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    );
+
+    // Save the updated configuration
+    $view_report->set('display.default.display_options.fields', $new_fields);
+    $view_report->set('display.default.display_options.relationships', $relationships);
+    $view_report->set('display.default.display_options.style_options', $style_options);
+    $view_report->save();
+  }
+
+  // Clear views cache to ensure changes take effect
+  if (function_exists('views_invalidate_cache')) {
+    views_invalidate_cache();
+  }
+
+  return t('Node Feedback views updated to include node title field.');
+}
