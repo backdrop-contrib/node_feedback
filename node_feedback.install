@@ -9,47 +9,47 @@
  * Implements hook_schema().
  */
 function node_feedback_schema() {
-  $schema = [];
+  $schema = array();
 
-  $schema['node_feedback'] = [
+  $schema['node_feedback'] = array(
     'description' => 'Node Feedback entries.',
-    'fields' => [
-      'nfid' => [
+    'fields' => array(
+      'nfid' => array(
         'description' => 'The unique ID for this particular flag.',
         'type' => 'serial',
         'size' => 'small',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ],
-      'nid' => [
+      ),
+      'nid' => array(
         'description' => 'The unique ID of the node.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 0,
-      ],
-      'name' => [
+      ),
+      'name' => array(
         'type' => 'varchar',
         'length' => 60,
         'not null' => TRUE,
         'default' => '',
         'description' => 'Unique user name.',
-      ],
-      'response_text_feedback' => [
+      ),
+      'response_text_feedback' => array(
         'description' => 'The response text feedback of this flag if any.',
         'type' => 'text',
         'not null' => FALSE,
-      ],
-      'timestamp' => [
+      ),
+      'timestamp' => array(
         'description' => 'The UNIX time stamp representing when the flag was set.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 0,
-      ],
-    ],
-    'primary key' => ['nfid'],
-  ];
+      ),
+    ),
+    'primary key' => array('nfid'),
+  );
 
   return $schema;
 }
@@ -59,10 +59,10 @@ function node_feedback_schema() {
  */
 function node_feedback_uninstall() {
   // Remove default, un-modified views.
-  $configs = [
+  $configs = array(
     'views.view.node_feedback_stats',
     'views.view.node_feedback_report',
-  ];
+  );
   foreach ($configs as $file) {
     $config = config($file);
     if ($config->get('storage') != VIEWS_STORAGE_OVERRIDE) {
@@ -70,12 +70,6 @@ function node_feedback_uninstall() {
     }
   }
 }
-
-/**
- * @defgroup updates-7.x-to-1.x Updates from 7.x to 1.x
- * @{
- * Update functions from Drupal 7.x to Backdrop CMS 1.x.
- */
 
 /**
  * Move book settings from variables to config.
@@ -89,8 +83,8 @@ function node_feedback_update_1000() {
   $config->set('nf_yes_message', update_variable_get('nf_yes_message', 'Thanks for your feedback!'));
   $config->set('nf_thanks_message', update_variable_get('nf_thanks_message', 'Thanks for your feedback!'));
   $config->set('nf_feedback_title', update_variable_get('nf_feedback_title', 'Tell us more..'));
-  $config->set('nf_allowed_content_type', update_variable_get('nf_allowed_content_type', []));
-  $config->set('nf_show_stats', update_variable_get('nf_show_stats', []));
+  $config->set('nf_allowed_content_type', update_variable_get('nf_allowed_content_type', array()));
+  $config->set('nf_show_stats', update_variable_get('nf_show_stats', array()));
 
   $config->save();
 
@@ -106,6 +100,225 @@ function node_feedback_update_1000() {
 }
 
 /**
- * @} End of "defgroup updates-7.x-to-1.x"
- * The next series of updates should start at 2000.
+ * Update node feedback views to include node title field.
  */
+function node_feedback_update_1001() {
+  // Load and update the node_feedback_stats view
+  $view_stats = config('views.view.node_feedback_stats');
+  if ($view_stats && !$view_stats->isNew()) {
+    // Add the title field after nfid
+    $fields = $view_stats->get('display.default.display_options.fields');
+    $fields['title'] = array(
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
+      'relationship' => 'nid',
+      'group_type' => 'group',
+      'ui_name' => '',
+      'label' => 'Node Title',
+      'exclude' => 0,
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 1,
+        'path' => '',
+        'absolute' => 0,
+        'external' => 0,
+        'replace_spaces' => 0,
+        'path_case' => 'none',
+        'trim_whitespace' => 0,
+        'alt' => '',
+        'rel' => '',
+        'link_class' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'nl2br' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'more_link' => 0,
+        'more_link_text' => '',
+        'more_link_path' => '',
+        'strip_tags' => 0,
+        'trim' => 0,
+        'preserve_tags' => '',
+        'html' => 0,
+      ),
+      'element_type' => '',
+      'element_class' => '',
+      'element_label_type' => '',
+      'element_label_class' => '',
+      'element_label_colon' => 1,
+      'element_wrapper_type' => '',
+      'element_wrapper_class' => '',
+      'element_default_classes' => 1,
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'hide_alter_empty' => 1,
+      'link_to_node' => 1,
+    );
+
+    // Update relationships to ensure node relationship exists
+    $relationships = $view_stats->get('display.default.display_options.relationships');
+    if (!isset($relationships['nid'])) {
+      $relationships['nid'] = array(
+        'id' => 'nid',
+        'table' => 'node_feedback',
+        'field' => 'nid',
+        'relationship' => 'none',
+        'group_type' => 'group',
+        'ui_name' => '',
+        'label' => 'Node',
+        'required' => 0,
+      );
+    }
+
+    // Update style options to include the new field
+    $style_options = $view_stats->get('display.default.display_options.style_options');
+    $style_options['columns']['title'] = 'title';
+    $style_options['info']['title'] = array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    );
+
+    // Save the updated configuration
+    $view_stats->set('display.default.display_options.fields', $fields);
+    $view_stats->set('display.default.display_options.relationships', $relationships);
+    $view_stats->set('display.default.display_options.style_options', $style_options);
+    $view_stats->save();
+  }
+
+  // Load and update the node_feedback_report view
+  $view_report = config('views.view.node_feedback_report');
+  if ($view_report && !$view_report->isNew()) {
+    // Add the title field after nfid
+    $fields = $view_report->get('display.default.display_options.fields');
+    $fields['title'] = array(
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
+      'relationship' => 'nid',
+      'group_type' => 'group',
+      'ui_name' => '',
+      'label' => 'Node Title',
+      'exclude' => 0,
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 1,
+        'path' => '',
+        'absolute' => 0,
+        'external' => 0,
+        'replace_spaces' => 0,
+        'path_case' => 'none',
+        'trim_whitespace' => 0,
+        'alt' => '',
+        'rel' => '',
+        'link_class' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'nl2br' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'more_link' => 0,
+        'more_link_text' => '',
+        'more_link_path' => '',
+        'strip_tags' => 0,
+        'trim' => 0,
+        'preserve_tags' => '',
+        'html' => 0,
+      ),
+      'element_type' => '',
+      'element_class' => '',
+      'element_label_type' => '',
+      'element_label_class' => '',
+      'element_label_colon' => 1,
+      'element_wrapper_type' => '',
+      'element_wrapper_class' => '',
+      'element_default_classes' => 1,
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'hide_alter_empty' => 1,
+      'link_to_node' => 1,
+    );
+
+    // Update relationships to ensure node relationship exists
+    $relationships = $view_report->get('display.default.display_options.relationships');
+    if (!isset($relationships['nid'])) {
+      $relationships['nid'] = array(
+        'id' => 'nid',
+        'table' => 'node_feedback',
+        'field' => 'nid',
+        'relationship' => 'none',
+        'group_type' => 'group',
+        'ui_name' => '',
+        'label' => 'Node',
+        'required' => 0,
+      );
+    }
+
+    // Update style options to include the new field
+    $style_options = $view_report->get('display.default.display_options.style_options');
+    $style_options['columns']['title'] = 'title';
+    $style_options['info']['title'] = array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    );
+
+    // Save the updated configuration
+    $view_report->set('display.default.display_options.fields', $fields);
+    $view_report->set('display.default.display_options.relationships', $relationships);
+    $view_report->set('display.default.display_options.style_options', $style_options);
+    $view_report->save();
+  }
+
+  // Clear views cache to ensure changes take effect
+  if (function_exists('views_invalidate_cache')) {
+    views_invalidate_cache();
+  }
+
+  return t('Node Feedback views updated to include node title field.');
+}
+
+/**
+ * Rename the block delta from "nf_stats" to "node_feedback" in all layouts.
+ */
+function node_feedback_update_1002() {
+  $updated = array();
+  foreach (config_get_names_with_prefix('layout.layout.') as $config_name) {
+    $config = config($config_name);
+    $content = $config->get('content');
+    if (empty($content)) {
+      continue;
+    }
+    $changed = FALSE;
+    foreach ($content as $uuid => $block) {
+      if (isset($block['plugin']) && $block['plugin'] == 'node_feedback:nf_stats') {
+        $content[$uuid]['plugin'] = 'node_feedback:node_feedback';
+        $content[$uuid]['data']['delta'] = 'node_feedback';
+        $changed = TRUE;
+      }
+    }
+    if ($changed) {
+      $config->set('content', $content);
+      $config->save();
+      $updated[] = $config->get('name');
+    }
+  }
+
+  if ($updated) {
+    layout_reset_caches();
+    return t('Node Feedback block updated in layouts: @layouts.', array('@layouts' => implode(', ', $updated)));
+  }
+}
