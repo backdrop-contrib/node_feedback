@@ -314,3 +314,35 @@ function node_feedback_update_1001() {
 
   return t('Node Feedback views updated to include node title field.');
 }
+
+/**
+ * Rename the block delta from "nf_stats" to "node_feedback" in all layouts.
+ */
+function node_feedback_update_1002() {
+  $updated = array();
+  foreach (config_get_names_with_prefix('layout.layout.') as $config_name) {
+    $config = config($config_name);
+    $content = $config->get('content');
+    if (empty($content)) {
+      continue;
+    }
+    $changed = FALSE;
+    foreach ($content as $uuid => $block) {
+      if (isset($block['plugin']) && $block['plugin'] == 'node_feedback:nf_stats') {
+        $content[$uuid]['plugin'] = 'node_feedback:node_feedback';
+        $content[$uuid]['data']['delta'] = 'node_feedback';
+        $changed = TRUE;
+      }
+    }
+    if ($changed) {
+      $config->set('content', $content);
+      $config->save();
+      $updated[] = $config->get('name');
+    }
+  }
+
+  if ($updated) {
+    layout_reset_caches();
+    return t('Node Feedback block updated in layouts: @layouts.', array('@layouts' => implode(', ', $updated)));
+  }
+}

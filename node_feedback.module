@@ -68,7 +68,7 @@ function node_feedback_stats_check() {
         $node = node_load(arg(1));
         $nf_allowed_content_types = config_get('node_feedback.settings', 'nf_allowed_content_type');
         if (count($nf_allowed_content_types) > 0) {
-          if ($nf_allowed_content_types[$node->type]) {
+          if (!empty($nf_allowed_content_types[$node->type])) {
             $access = TRUE;
           } else {
             $access = FALSE;
@@ -227,12 +227,13 @@ function node_feedback_block_info() {
  * This hook generates the contents of the blocks themselves.
  */
 function node_feedback_block_view($delta = '', $settings = array(), $contexts = array()) {
+  $block = array();
   // The $delta parameter tells us which block is being requested.
   switch ($delta) {
     case 'node_feedback':
       $node = $contexts['node'];
       $nf_allowed_content_types = config_get('node_feedback.settings', 'nf_allowed_content_type');
-      if (count($nf_allowed_content_types) > 0 && $nf_allowed_content_types[$node->type]) {
+      if (!empty($nf_allowed_content_types[$node->type])) {
         $args = array(
           'nid' => $node->nid,
         );
