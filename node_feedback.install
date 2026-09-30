@@ -106,9 +106,11 @@ function node_feedback_update_1001() {
   // Load and update the node_feedback_stats view
   $view_stats = config('views.view.node_feedback_stats');
   if ($view_stats && !$view_stats->isNew()) {
-    // Add the title field after nfid
+    // Get current fields
     $fields = $view_stats->get('display.default.display_options.fields');
-    $fields['title'] = array(
+
+    // Create title field definition
+    $title_field = array(
       'id' => 'title',
       'table' => 'node',
       'field' => 'title',
@@ -159,6 +161,16 @@ function node_feedback_update_1001() {
       'hide_alter_empty' => 1,
       'link_to_node' => 1,
     );
+
+    // Reorder fields: nfid, title, then the rest
+    $new_fields = array();
+    foreach ($fields as $field_name => $field_config) {
+      $new_fields[$field_name] = $field_config;
+      // After nfid, insert the title field
+      if ($field_name === 'nfid') {
+        $new_fields['title'] = $title_field;
+      }
+    }
 
     // Update relationships to ensure node relationship exists
     $relationships = $view_stats->get('display.default.display_options.relationships');
@@ -175,7 +187,7 @@ function node_feedback_update_1001() {
       );
     }
 
-    // Update style options to include the new field
+    // Update style options to include the new field in the correct position
     $style_options = $view_stats->get('display.default.display_options.style_options');
     $style_options['columns']['title'] = 'title';
     $style_options['info']['title'] = array(
@@ -187,7 +199,7 @@ function node_feedback_update_1001() {
     );
 
     // Save the updated configuration
-    $view_stats->set('display.default.display_options.fields', $fields);
+    $view_stats->set('display.default.display_options.fields', $new_fields);
     $view_stats->set('display.default.display_options.relationships', $relationships);
     $view_stats->set('display.default.display_options.style_options', $style_options);
     $view_stats->save();
@@ -196,9 +208,11 @@ function node_feedback_update_1001() {
   // Load and update the node_feedback_report view
   $view_report = config('views.view.node_feedback_report');
   if ($view_report && !$view_report->isNew()) {
-    // Add the title field after nfid
+    // Get current fields
     $fields = $view_report->get('display.default.display_options.fields');
-    $fields['title'] = array(
+
+    // Create title field definition
+    $title_field = array(
       'id' => 'title',
       'table' => 'node',
       'field' => 'title',
@@ -250,6 +264,16 @@ function node_feedback_update_1001() {
       'link_to_node' => 1,
     );
 
+    // Reorder fields: timestamp, nfid, title, then the rest
+    $new_fields = array();
+    foreach ($fields as $field_name => $field_config) {
+      $new_fields[$field_name] = $field_config;
+      // After nfid, insert the title field
+      if ($field_name === 'nfid') {
+        $new_fields['title'] = $title_field;
+      }
+    }
+
     // Update relationships to ensure node relationship exists
     $relationships = $view_report->get('display.default.display_options.relationships');
     if (!isset($relationships['nid'])) {
@@ -265,7 +289,7 @@ function node_feedback_update_1001() {
       );
     }
 
-    // Update style options to include the new field
+    // Update style options to include the new field in the correct position
     $style_options = $view_report->get('display.default.display_options.style_options');
     $style_options['columns']['title'] = 'title';
     $style_options['info']['title'] = array(
@@ -277,7 +301,7 @@ function node_feedback_update_1001() {
     );
 
     // Save the updated configuration
-    $view_report->set('display.default.display_options.fields', $fields);
+    $view_report->set('display.default.display_options.fields', $new_fields);
     $view_report->set('display.default.display_options.relationships', $relationships);
     $view_report->set('display.default.display_options.style_options', $style_options);
     $view_report->save();
